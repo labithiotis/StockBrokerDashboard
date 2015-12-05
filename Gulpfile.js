@@ -77,6 +77,12 @@ gulp.task('html', function() {
     .pipe(browserSync.reload({ stream: true }));
 });
 
+gulp.task('assets', function() {
+  return gulp.src(config.src('assets/**/*'))
+      .pipe(gulp.dest(config.dest('assets')))
+      .pipe(browserSync.reload({ stream: true }));
+});
+
 
 /*
  * Helper task to disable production mode before running build task
@@ -98,16 +104,18 @@ gulp.task('server', ['build'], function() {
 
   gulp.watch([config.src('app/**/*.js'), config.src('app/**/*.hbs')], ['scripts']);
   gulp.watch(config.src('styles/**/*.less'), ['styles']);
+  gulp.watch(config.src('assets/**/*.*'), ['assets']);
   gulp.watch(config.src('index.html'), ['html']);
-})
+
+});
 
 
 /*
  * Build task - production mode
  */
-gulp.task('build', ['scripts', 'styles', 'html']);
+gulp.task('build', ['scripts', 'styles', 'html', 'assets']);
 
 /*
  * Default task - development mode
  */
-gulp.task('default', ['dev', 'server']);
+gulp.task('default', ['dev', 'build', 'server']);

@@ -115,7 +115,7 @@ export default class ProductView extends Backbone.View {
 						interpolate: 'monotone', // cardinal, basis, monotone
 						//showYAxis: false,
 						//yRange: [-1, 0, 1],
-						xRange: [1, 60]
+						xRange: [1, 120]
 					});
 
 			chart.yAxis.scale().domain([-0.75, 0, 0.75]);

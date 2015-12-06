@@ -1,75 +1,112 @@
 import Backbone from 'backbone';
 import $ from 'jquery';
 import Isotope from 'isotope-layout';
+import IsotopePackery from 'isotope-packery';
 
 import ProductView from './product'
-import CounterView from './counter.js'
 import MainTemplate from '../templates/main.hbs';
 
 export default class MainView extends Backbone.View {
 
-  get id() { return 'main'; }
+	get id() { return 'main'; }
 
-  get events() {
-    return {
-      //'click #btn-main-clickme': 'clickMe'
-    };
-  }
+	get events() {
+		return {
+			'keypress': 'sortGrid'
+		};
+	}
 
-  constructor(options) {
-    super(options);
+	constructor(options) {
+		super(options);
 
-    this.listenTo(this.app.collections.products, 'update', this.render);
-  }
+		this.listenTo(this.app.collections.products, 'update', this.render);
+	}
 
-  render() {
+	render() {
 
-    console.log('render main')
+		console.log('render main');
 
-    this.$el.html(MainTemplate());
+		this.$el.html(MainTemplate());
 
-    this.$grid = $('.grid', this.$el);
+		this.$grid = $('.grid', this.$el);
 
-    this.addProducts();
+		this.addProducts();
 
-    this.initIsotope();
+		this.initIsotope();
 
-    return this;
+		this.startRandomShuffle();
 
-  }
+		return this;
 
-  clickMe() {
-    this.model.increaseCounter();
-  }
+	}
 
-  addProducts() {
+	addProducts() {
 
-    this.app.collections.products.each(product => {
+		this.$grid.html('<div class="grid-gutter"></div><div class="grid-sizer"></div>');
 
-      console.log('Add product to grid %s', product.get('name'));
+		this.app.collections.products.each(product => {
 
-      let productView = new ProductView({model: product}).render();
+			console.log('Add product to grid %s', product.get('name'));
 
-      this.$grid.append(productView.$el);
+			let productView = new ProductView({model: product}).render();
 
-    });
+			productView.parent = this;
 
-  }
+			this.$grid.append(productView.$el);
 
-  initIsotope() {
+		});
 
+	}
 
-    this.isotope = new Isotope(this.$grid[0], {
-      //layoutMode: 'masonryHorizontal',
-      itemSelector: '.grid-item',
-      masonry: {
-        rowHeight: 100,
-        columnWidth: 100,
-        isFitWidth: true
-      }
-    });
+	initIsotope() {
 
-  }
+		this.isotope = new Isotope(this.$grid[0], {
+			layoutMode: 'packery',
+			itemSelector: '.grid-item',
+			percentPosition: true,
+			packery: {
+				columnWidth: '.grid-sizer',
+				gutter: '.grid-gutter'
+			},
+			getSortData: {
+				time: '[data-time]'//,
+				//featured: '[data-featured]',
+				//up: '[data-up]',
+				//down: '[data-down]',
+				//same: '[data-same]',
+				//percentage: '[data-percentage]'
+			},
+			sortBy: 'time'
+		});
 
+		//this.isotope({sortBy: 'time'})
+
+	}
+
+	sortGrid(e) {
+		var code = e.keyCode || e.which;
+		switch(code) {
+			case(49): alert(1); break;
+			case(50): alert(2); break;
+			case(51): alert(3); break;
+			case(52): alert(4); break;
+			case(53): alert(5); break;
+		}
+
+	}
+
+	startRandomShuffle() {
+
+		clearInterval(this.randomTimer);
+
+		this.randomTimer = setInterval(this.randomShuffle.bind(this), 30000)
+
+	}
+
+	randomShuffle() {
+
+		this.isotope.shuffle()
+
+	}
 
 }

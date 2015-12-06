@@ -4,34 +4,45 @@ header.header {
   background: @colourPrimary;
 
   .logo {
-    height: 60px;
+    height: @navHeight;
+  }
+
+  .version {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    opacity:0.3;
   }
 
 }
 
 section.board {
-  background: black;
 
   section.grid {
+    padding: 10px;
     margin: 0 auto;
 
     @import "product.less";
 
-    .grid-item {
-
+    .grid-gutter {
+      width: 10px;
+      height: 10px;
     }
 
-    .grid-item {
-      float: left;
-      width: 100px;
+    .grid-sizer, .grid-item {
+      width: 200px;
       height: 100px;
-      background: #0D8;
-      border: 2px solid #333;
-      border-color: hsla(0, 0%, 0%, 0.7);
     }
 
-    .grid-item--width2 { width: 200px; }
-    .grid-item--height2 { height: 200px; }
+    .featured {
+      width: 410px;
+      height: 210px;
+    }
+
+    .grid-item {
+      margin: 0;
+
+    }
 
   }
 

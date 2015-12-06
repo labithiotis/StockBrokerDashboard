@@ -13,6 +13,5 @@ Backbone.Router.prototype.app = Backbone.Model.prototype.app = Backbone.Collecti
 
 export default app
 
-
 // EXPOSE FOR DEBUG
 window.app = app;

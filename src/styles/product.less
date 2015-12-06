@@ -2,6 +2,7 @@
   text-align: center;
   background: @productBackgroundColour;
   color: @productFontColour;
+  overflow: hidden;
 
   .change {
     height: 10%;
@@ -10,7 +11,7 @@
 
   .product-name {
     font-weight: bold;
-    font-size: 1.5em;
+    font-size: 1.2em;
     padding: 0.2rem 1rem 0 1rem;
     width: 100%;
     color: darken(@productFontColour, 30);
@@ -35,6 +36,21 @@
       display: inline-block;
       width: 75%;
       height: 100%;
+
+
+      svg {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        /* Trying to get SVG to act like a greedy block in all browsers */
+        display: block;
+        width:100%;
+        height:100%;
+      }
+
     }
 
     .percentage {
@@ -88,7 +104,8 @@
     }
 
     .product-name {
-      font-size: 3em;
+      padding-top: 0.5em;
+      font-size: 2em;
       color: @productFontColour;
     }
 

@@ -2,7 +2,7 @@ import $ from 'jquery';
 import Backbone from 'backbone';
 import _ from 'underscore';
 import numeral from 'numeral';
-import fitterHappierText from 'fitter-happier-text';
+//import fitterHappierText from 'fitter-happier-text';
 
 import ProductTemplate from '../templates/product.hbs';
 
@@ -41,6 +41,8 @@ export default class ProductView extends Backbone.View {
 
 		data.percent_change = parseInt(data.percent_change * 100);
 
+		this.featured = data.percent_change <= -11;
+
 		if(data.percent_change > 0) {
 			this.$el.addClass('up');
 			this.$el.attr('data-up', true);
@@ -56,7 +58,7 @@ export default class ProductView extends Backbone.View {
 			this.$el.attr('data-same', true);
 		}
 
-		if(data.percent_change <= -20) {
+		if(this.featured) {
 			featuredCount ++;
 			this.$el.addClass('featured');
 			this.$el.attr('data-featured', true);
@@ -75,69 +77,50 @@ export default class ProductView extends Backbone.View {
 
 		this.$el.html(ProductTemplate(data));
 
-
-
 		this.renderHistoryChart();
+
+		//fitterHappierText($('.product-name:first', this.$el));
 
 		return this;
 
 	}
 
-	getHistoryData() {
-
-		return [{
-			area: false,
-			values: _.map(this.model.get('history') || [], (price, i) => { return { y: price, x: i +1 } }),
-			key: "History",
-			color: "#F4D100",
-			strokeWidth: 1,
-			//fillOpacity: .1
-		}]
-
-	}
-
 	renderHistoryChart() {
 
-		//$('.chart .nvd3-svg', this.el).remove();
+		var $el = $('.chart', this.el);
 
-		this.chart = nv.addGraph( () => {
+		var width = this.featured ? 400 : 200;
+		var height = this.featured ? 50 : 25;
 
-			var $el = $('.chart', this.el),
-				width = parseInt($el.width(), 10),
-				chart = nv.models.lineChart()
-					.options({
-						transitionDuration: 0,
-						margin: {top: 10, right: 10, bottom: 10, left: 10},
-						interactive: false,
-						useInteractiveGuideline: false,
-						showLegend: false,
-						showXAxis: false,
-						interpolate: 'monotone', // cardinal, basis, monotone
-						//showYAxis: false,
-						//yRange: [-1, 0, 1],
-						xRange: [1, 120]
-					});
+		var yScale = d3.scale.linear().domain([-1, 1]);//.range([0, 10]);
+		var yAxis = d3.svg.axis().scale(yScale);
 
-			chart.yAxis.scale().domain([-0.75, 0, 0.75]);
-			chart.showYAxis(false);
+		var xScale = d3.scale.linear().domain([0, 30]).rangeRound([0, width]);
+		var xAxis = d3.svg.axis().scale(xScale);
+		
+		var lineFunction = d3
+				.svg
+				.line()
+				.x(function(d) { return xScale(d.x) })
+				.y(function(d) { return height - yScale(d.y) })
+				.interpolate('monotone');
 
-			var x = d3.scale.linear()
-					.range([0, width])
-					.domain([0, .4]);
+		var svgContainer = d3
+				.select($el[0])
+				.append('svg')
+				.attr('width', width + 'px')
+				.attr('height', height + 'px');
 
-			chart.y(function (d) { return d.y; });
+		var data = _.map(this.model.get('history') || [], (percent, i) => { return { y: percent*100, x: i +1 } });
 
-			//logger(this.getHistoryData());
-
-			d3.select($el[0]).append('svg')
-					.datum(this.getHistoryData())
-					.call(chart);
-
-			nv.utils.windowResize(chart.update);
-
-			return chart;
-
-		});
+		var lineGraph = svgContainer
+				.append('path')
+				.call(xAxis)
+				.call(yAxis)
+				.attr('d', lineFunction(data))
+				.attr('stroke', '#F4D100')
+				.attr('stroke-width', 2)
+				.attr('fill', 'none');
 
 	}
 

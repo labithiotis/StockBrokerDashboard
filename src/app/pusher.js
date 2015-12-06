@@ -3,7 +3,7 @@ import Pusher from 'pusher-js';
 import _ from 'underscore';
 
 Pusher.log = (message) => {
-	if(logger) logger(message);
+	//if(logger) logger(message);
 };
 
 let pusher = new Pusher('5577ecaa27f974815b3b');

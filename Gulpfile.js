@@ -32,7 +32,7 @@ var config = {
 };
 
 gulp.task('clean', function() {
-	return del([config.BUILD_DIR]);
+	del([config.BUILD_DIR]);
 });
 
 

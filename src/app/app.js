@@ -1,10 +1,13 @@
+import debug from './logger';
 import Backbone from 'backbone';
 import pusher from './pusher';
 import Products from './models/products';
+import News from './models/news';
 
 var app = {
-	collections: {
-		products: new Products()
+	collections : {
+		products: new Products(),
+		news: new News()
 	},
 	pusher: pusher
 };

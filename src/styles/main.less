@@ -20,7 +20,7 @@ section.board {
 
   section.grid {
     padding: 10px;
-    margin: 0 auto;
+    margin: 0 auto 40px auto;
 
     @import "product.less";
 
@@ -52,6 +52,21 @@ section.board {
 
 }
 
-header.footer {
-
+footer.news-ticker {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  background-color: white;
+  color: black;
+  marquee {
+    height: 40px;
+    vertical-align: middle;
+    line-height: 40px;
+    font-size: 16px;
+    span {
+      margin: 0 1.5rem;
+    }
+  }
 }

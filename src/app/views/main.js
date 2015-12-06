@@ -24,7 +24,7 @@ export default class MainView extends Backbone.View {
 
 	render() {
 
-		console.log('render main');
+		logger('render main');
 
 		this.$el.html(MainTemplate());
 
@@ -46,7 +46,7 @@ export default class MainView extends Backbone.View {
 
 		this.app.collections.products.each(product => {
 
-			console.log('Add product to grid %s', product.get('name'));
+			logger('Add product to grid %s', product.get('name'));
 
 			let productView = new ProductView({model: product}).render();
 
@@ -106,6 +106,10 @@ export default class MainView extends Backbone.View {
 	randomShuffle() {
 
 		this.isotope.shuffle()
+
+	}
+
+	newsTicker() {
 
 	}
 

@@ -12,7 +12,6 @@ export default class Router extends Backbone.Router {
 
 		this.app.collections.products.fetch();
 
-
 	}
 
 	default(path = '') {

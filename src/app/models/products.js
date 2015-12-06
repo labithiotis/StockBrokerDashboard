@@ -18,14 +18,14 @@ let Product = exports.product = class Product extends Backbone.Model {
 
 export default class Products extends Backbone.Collection {
 
-	model: Product;
+	model:Product;
 
 	get url() {
 		return 'https://hack.boppl.me/api/menu?merchant_id=VW84GMYHDGGRE'
 	}
 
-	parse (r) {
-		_.each(r, (p)=> { p.timestamp = new Date().getTime() } );
+	parse(r) {
+		_.each(r, (p)=> { p.timestamp = new Date().getTime() });
 		return r;
 	}
 

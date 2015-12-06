@@ -45,11 +45,9 @@ gulp.task('scripts', function() {
     .bundle()
     .pipe(source('bundle.js'))
     .pipe(buffer())
-    .pipe(sourcemaps.init({ loadMaps: true }))
-    .pipe(
-      gulpif(config.PRODUCTION, uglify())
-    )
-    .pipe(sourcemaps.write('./'))
+    .pipe(gulpif(config.PRODUCTION, sourcemaps.init({ loadMaps: true })))
+    .pipe(gulpif(config.PRODUCTION, uglify()))
+    .pipe(gulpif(config.PRODUCTION, sourcemaps.write('./')))
     .pipe(gulp.dest(config.dest('js')))
     .pipe(browserSync.reload({ stream: true }));
 });
@@ -57,15 +55,11 @@ gulp.task('scripts', function() {
 
 gulp.task('styles', function() {
   return gulp.src(config.src('styles/index.less'), { base: '.' })
-    // .pipe(sourcemaps.init())
     .pipe(less({
       plugins: [lessAutoprefixPlugin]
     }))
-    .pipe(
-      gulpif(config.PRODUCTION, minifyCSS())
-    )
+    .pipe(gulpif(config.PRODUCTION, minifyCSS()))
     .pipe(rename('bundle.css'))
-    // .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(config.dest('css')))
     .pipe(browserSync.reload({ stream: true }));
 });

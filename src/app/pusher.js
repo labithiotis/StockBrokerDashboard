@@ -2,20 +2,22 @@ import app from './app';
 import Pusher from 'pusher-js';
 import _ from 'underscore';
 
-Pusher.log = function(message) {
-	if(window.console && window.console.log) {
-		window.console.log(message);
-	}
+Pusher.log = (message) => {
+	if(logger) logger(message);
 };
 
-let pusher = new Pusher('f93950db757aaa7c02c2');
+let pusher = new Pusher('5577ecaa27f974815b3b');
 
 // Menu Product Updates
-let menu = pusher.subscribe('menu');
+//let menu = pusher.subscribe('menu');
 
-menu.bind('update', function(products) {
+pusher.subscribe('menu').bind('update', (products) => {
 	_.each(products, (product) => { product.timestamp = new Date().getTime() } );
 	app.collections.products.add(products, {merge: true});
+});
+
+pusher.subscribe('system').bind('update', (products) => {
+	window.location.reload();
 });
 
 export default pusher;

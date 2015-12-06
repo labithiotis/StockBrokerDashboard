@@ -1,9 +1,12 @@
 import $ from 'jquery';
 import Backbone from 'backbone';
+import _ from 'underscore';
 import numeral from 'numeral';
 import fitterHappierText from 'fitter-happier-text';
 
 import ProductTemplate from '../templates/product.hbs';
+
+let featuredCount = 0;
 
 export default class ProductView extends Backbone.View {
 
@@ -17,20 +20,24 @@ export default class ProductView extends Backbone.View {
 	}
 
 	update() {
+		let currentFeaturedCount = featuredCount;
+		featuredCount = 0;
 		this.render();
-		this.parent.isotope.layout();
-		//this.parent.isotope.sortBy('time');
+		if(currentFeaturedCount !== featuredCount) {
+			logger('Re-layout grid');
+			this.parent.isotope.layout();
+		}
 	}
 
 	render() {
 
 		this.el.className = 'grid-item product';
 
-		console.log('Render product: #%s', this.model.id);
+		logger('Render product: #%s', this.model.id);
 
 		let data = this.model.toJSON();
 
-		console.log(data);
+		//logger(data);
 
 		data.percent_change = parseInt(data.percent_change * 100);
 
@@ -49,10 +56,12 @@ export default class ProductView extends Backbone.View {
 			this.$el.attr('data-same', true);
 		}
 
-		if(data.percent_change <= -50) {
+		if(data.percent_change <= -20) {
+			featuredCount ++;
 			this.$el.addClass('featured');
 			this.$el.attr('data-featured', true);
 		} else {
+			featuredCount --;
 			this.$el.removeClass('featured');
 			this.$el.attr('data-featured', false);
 		}
@@ -66,7 +75,7 @@ export default class ProductView extends Backbone.View {
 
 		this.$el.html(ProductTemplate(data));
 
-		fitterHappierText($('.product-name', this.$el)[0]);
+
 
 		this.renderHistoryChart();
 
@@ -77,32 +86,50 @@ export default class ProductView extends Backbone.View {
 	getHistoryData() {
 
 		return [{
-			area: true,
-			values: this.model.get('hisotry') || [],
+			area: false,
+			values: _.map(this.model.get('history') || [], (price, i) => { return { y: price, x: i +1 } }),
 			key: "History",
-			color: "#ffffff",
-			strokeWidth: 2,
-			classed: 'dashed'
+			color: "#F4D100",
+			strokeWidth: 1,
+			//fillOpacity: .1
 		}]
 
 	}
 
 	renderHistoryChart() {
 
+		//$('.chart .nvd3-svg', this.el).remove();
+
 		this.chart = nv.addGraph( () => {
 
-			var chart = nv.models.lineChart()
+			var $el = $('.chart', this.el),
+				width = parseInt($el.width(), 10),
+				chart = nv.models.lineChart()
 					.options({
-						transitionDuration: 300,
-						useInteractiveGuideline: false
+						transitionDuration: 0,
+						margin: {top: 10, right: 10, bottom: 10, left: 10},
+						interactive: false,
+						useInteractiveGuideline: false,
+						showLegend: false,
+						showXAxis: false,
+						interpolate: 'monotone', // cardinal, basis, monotone
+						//showYAxis: false,
+						//yRange: [-1, 0, 1],
+						xRange: [1, 60]
 					});
 
-			chart.showXAxis(false);
+			chart.yAxis.scale().domain([-0.75, 0, 0.75]);
 			chart.showYAxis(false);
 
-			let el = $('.chart', this.el)[0]
+			var x = d3.scale.linear()
+					.range([0, width])
+					.domain([0, .4]);
 
-			d3.select(el).append('svg')
+			chart.y(function (d) { return d.y; });
+
+			//logger(this.getHistoryData());
+
+			d3.select($el[0]).append('svg')
 					.datum(this.getHistoryData())
 					.call(chart);
 

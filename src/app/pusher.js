@@ -6,7 +6,7 @@ Pusher.log = (message) => {
 	//if(logger) logger(message);
 };
 
-let pusher = new Pusher('5577ecaa27f974815b3b');
+let pusher = new Pusher('d1c73394c74cbdc189af');
 
 // Menu Product Updates
 //let menu = pusher.subscribe('menu');

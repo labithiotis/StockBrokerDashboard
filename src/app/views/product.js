@@ -92,7 +92,7 @@ export default class ProductView extends Backbone.View {
 		var width = this.featured ? 400 : 200;
 		var height = this.featured ? 50 : 25;
 
-		var yScale = d3.scale.linear().domain([-1, 1]);//.range([0, 10]);
+		var yScale = d3.scale.linear().domain([-0.75, 0.75]).range([0,0.8]);
 		var yAxis = d3.svg.axis().scale(yScale);
 
 		var xScale = d3.scale.linear().domain([0, 30]).rangeRound([0, width]);
